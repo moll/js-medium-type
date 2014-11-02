@@ -1,0 +1,46 @@
+{
+	"name": "medium-type",
+	"version": "0.0.0",
+	"description": "Class for parsing, stringifying and manipulating media types. Useful for content negotiation. Follows RFC2045, supports quoted parameters, all allowed characters etc.",
+	"keywords": [
+		"content-type",
+		"media-type",
+		"mime",
+		"rfc2045",
+		"rfc2046",
+		"rfc3023",
+		"rfc6838",
+		"rfc6839"
+	],
+	"homepage": "https://github.com/moll/js-medium-type",
+	"bugs": "https://github.com/moll/js-medium-type/issues",
+
+	"author": {
+		"name": "Andri Möll",
+		"email": "andri@dot.ee",
+		"url": "http://themoll.com"
+	},
+
+	"repository": {
+		"type": "git",
+		"url": "git://github.com/moll/js-medium-type.git"
+	},
+
+	"licenses": [{
+		"type": "LAGPL",
+		"url": "https://github.com/moll/js-medium-type/blob/master/LICENSE"
+	}],
+
+	"main": "index.js",
+	"scripts": {"test": "make test"},
+
+	"dependencies": {
+		"overstrike": ">= 0.3.0 < 0.4.0"
+	},
+
+	"devDependencies": {
+		"mocha": ">= 1.18.2 < 2",
+		"underscore": ">= 1.4.3 < 1.6",
+		"must": "< 1"
+	}
+}
