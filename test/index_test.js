@@ -307,6 +307,31 @@ describe("MediumType", function() {
     })
   })
 
+  describe(".prototype.q", function() {
+    it("must return q parameter as a number", function() {
+      new MediumType("text/html; q=0.3").q.must.equal(0.3)
+    })
+
+    it("must return 0 if set as zero", function() {
+      new MediumType("text/html; q=0").q.must.equal(0)
+    })
+
+    it("must return 1 if without q parameter", function() {
+      new MediumType("text/html").q.must.equal(1)
+    })
+
+    it("must be enumerable", function() {
+      new MediumType("text/html").must.have.enumerable("q")
+    })
+
+    it("must set q parameter", function() {
+      var type = new MediumType("text/html")
+      type.q = 3
+      type.parameters.q.must.equal(3)
+      type.q.must.equal(3)
+    })
+  })
+
   describe(".prototype.toString", function() {
     it("must stringify type and subtype", function() {
       var type = new MediumType({

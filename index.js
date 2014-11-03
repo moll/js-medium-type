@@ -41,6 +41,12 @@ MediumType.prototype.type = ""
 MediumType.prototype.subtype = ""
 MediumType.prototype.suffix = ""
 
+Object.defineProperty(MediumType.prototype, "q", {
+  get: function() { var q = this.parameters.q; return q == null? 1: Number(q) },
+  set: function(value) { this.parameters.q = value },
+  configurable: true, enumerable: true
+})
+
 MediumType.prototype.toString = function() {
   var string = this.type + "/" + this.subtype
   if (this.suffix) string += "+" + this.suffix
@@ -144,9 +150,7 @@ function contains(a, b) {
 }
 
 function sortByQuality(a, b) {
-  var aQ = a.parameters.q != null ? Number(a.parameters.q) : 1
-  var bQ = b.parameters.q != null ? Number(b.parameters.q) : 1
-  return bQ - aQ
+  return b.q - a.q
 }
 
 function sortByType(a, b) {
