@@ -83,6 +83,14 @@ MediumType.split = function(string) {
   })
 }
 
+MediumType.sort = function(types) {
+  return types.slice().sort(MediumType.comparator)
+}
+
+MediumType.comparator = function(a, b) {
+  return sortByQuality(a, b) || sortByType(a, b) || sortByParameters(a, b)
+}
+
 // https://tools.ietf.org/html/rfc2045#section-5.1
 //
 // Using the permissive RFC 2045 5.1 for parsing as opposed to RFC 6838 that
@@ -120,3 +128,26 @@ function matchAt(string, regexp, pos) {
   if (match == null || match.index != pos) return regexp.lastIndex = 0, null
   return match
 }
+
+function sortByQuality(a, b) {
+  var aQ = a.parameters.q != null ? Number(a.parameters.q) : 1
+  var bQ = b.parameters.q != null ? Number(b.parameters.q) : 1
+  return bQ - aQ
+}
+
+function sortByType(a, b) {
+  // RFC 7231 does not speak of suffix ordering. Better ignore that for now.
+  if (a.type == b.type && a.subtype == b.subtype) return 0
+  if (a.type == "*" && a.subtype == "*") return 1
+  if (b.type == "*" && b.subtype == "*") return -1
+  if (a.subtype == "*" && b.subtype == "*") return 0
+  if (a.subtype == "*") return 1
+  if (b.subtype == "*") return -1
+  return 0
+}
+
+function sortByParameters(a, b) {
+  return count(b.parameters) - count(a.parameters)
+}
+
+function count(obj) { var i = 0; for (obj in obj) ++i; return i }

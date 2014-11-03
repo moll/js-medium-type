@@ -572,6 +572,60 @@ describe("MediumType", function() {
       err.must.be.an.instanceof(SyntaxError)
     })
   })
+
+  describe(".sort", function() {
+    it("must sort by q parameter", function() {
+      var a = new MediumType("text/html; q=0.7")
+      var b = new MediumType("text/plain; q=0.5")
+      var c = new MediumType("application/json; q=0.2")
+      MediumType.sort([c, a, b]).must.eql([a, b, c])
+    })
+
+    it("must assume q is 1 if not given", function() {
+      var a = new MediumType("text/html")
+      var b = new MediumType("text/plain; q=0.5")
+      var c = new MediumType("application/json; q=0.2")
+      MediumType.sort([c, a, b]).must.eql([a, b, c])
+    })
+
+    it("must sort more specific subtype before wildcard", function() {
+      var a = new MediumType("text/plain")
+      var b = new MediumType("text/*")
+      var c = new MediumType("*/*")
+      MediumType.sort([c, a, b]).must.eql([a, b, c])
+    })
+
+    it("must not sort more specific suffix before subtype", function() {
+      var a = new MediumType("application/vnd.foo")
+      var b = new MediumType("application/vnd.foo+json")
+      MediumType.sort([a, b]).must.eql([a, b])
+    })
+
+    it("must sort more parameters before fewer", function() {
+      var types = [
+        new MediumType("text/html; level=3; q=0.7"),
+        new MediumType("text/html; q=0.7"),
+        new MediumType("text/plain; q=0.5"),
+        new MediumType("*/*; q=0.1; charset=utf-8"),
+        new MediumType("*/*; q=0.1"),
+      ]
+
+      MediumType.sort(_.shuffle(types)).must.eql(types)
+    })
+
+    it("must not modify given array", function() {
+      var a = new MediumType("text/html; q=0.7")
+      var b = new MediumType("text/plain; q=0.5")
+      var c = new MediumType("application/json; q=0.2")
+      var types = [c, a, b]
+      MediumType.sort(types)
+
+      types.length.must.equal(3)
+      types[0].must.equal(c)
+      types[1].must.equal(a)
+      types[2].must.equal(b)
+    })
+  })
 })
 
 function isControl(char) {
