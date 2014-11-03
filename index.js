@@ -54,6 +54,7 @@ MediumType.prototype.toString = function() {
 }
 
 MediumType.prototype.toJSON = MediumType.prototype.toString
+MediumType.prototype.inspect = MediumType.prototype.toString
 
 MediumType.parse = MediumType
 
