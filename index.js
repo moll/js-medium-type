@@ -1,4 +1,5 @@
 var _ = require("overstrike")
+var max = Math.max
 module.exports = MediumType
 
 function MediumType(type) {
@@ -26,13 +27,14 @@ function MediumType(type) {
     if (this.suffix.length) this.subtype = this.subtype.slice(0, suffix)
 
     var param
-    var index = PARAMETERS.lastIndex = match[1].length + 1 + match[2].length
-    while ((param = PARAMETERS.exec(type)) && (param.index == index)) {
+    PARAMETERS.lastIndex = match[1].length + 1 + match[2].length
+    while (param = matchAt(type, PARAMETERS, PARAMETERS.lastIndex)) {
       this.parameters[param[1].toLowerCase()] = unquote(param[2])
-      index = PARAMETERS.lastIndex
     }
   }
-  else if (typeof type == "object") _.assign(this, type)
+  else if (type && typeof type == "object") _.assign(this, type)
+  else if (type === undefined);
+  else throw new SyntaxError("Invalid Media Type: " + type)
 }
 
 MediumType.prototype.type = ""
@@ -60,6 +62,26 @@ MediumType.stringify = function(type) {
   return new MediumType(type).toString()
 }
 
+MediumType.split = function(string) {
+  var types = []
+  COMMAS.lastIndex = 0
+
+  while (true) {
+    var match
+    if (!(match = matchAt(string, MEDIA_TYPES, COMMAS.lastIndex))) break
+    types.push(match[0])
+    if (!(match = matchAt(string, COMMAS, MEDIA_TYPES.lastIndex))) break
+  }
+
+  var length = string.length
+  if (length == 0 || max(MEDIA_TYPES.lastIndex, COMMAS.lastIndex) != length)
+    throw new SyntaxError("Invalid Media Types: " + string)
+
+  return types.map(function(type) {
+    return type == null ? null : new MediumType(type)
+  })
+}
+
 // https://tools.ietf.org/html/rfc2045#section-5.1
 //
 // Using the permissive RFC 2045 5.1 for parsing as opposed to RFC 6838 that
@@ -67,12 +89,14 @@ MediumType.stringify = function(type) {
 var TOKEN = "[-a-zA-Z0-9!#$%^&*_+{}\\|'.`~]+"
 var QUOTED = "\"[^\\\\\"\x00-\x1f\x7f]*(\\\\.[^\\\\\"\x00-\x1f\x7f]*)*\""
 var TYPE = "(" + TOKEN + ")"
+var COMMAS = /\s*,\s*/g
 
 // https://tools.ietf.org/html/rfc2045#section-5.1
 var PARAMETER = "(?:\\s*;\\s*(" + TOKEN + ")=(" + TOKEN + "|" + QUOTED + "))"
 var PARAMETERS = new RegExp(PARAMETER, "g")
 
 var MEDIA_TYPE = new RegExp("^" + TYPE + "/" + TYPE + PARAMETER + "*$")
+var MEDIA_TYPES = new RegExp(TYPE + "/" + TYPE + PARAMETER + "*", "g")
 
 var ALL_TOKEN = new RegExp("^" + TOKEN + "$")
 var ESCAPE = /([\\"])/g
@@ -87,4 +111,11 @@ function quote(value) {
 function unquote(value) {
   if (value[0] == '"') return value.slice(1, -1).replace(UNESCAPE, "$1")
   return value
+}
+
+function matchAt(string, regexp, pos) {
+  regexp.lastIndex = pos
+  var match = regexp.exec(string)
+  if (match == null || match.index != pos) return regexp.lastIndex = 0, null
+  return match
 }

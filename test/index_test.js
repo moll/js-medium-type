@@ -25,6 +25,20 @@ describe("MediumType", function() {
       type.parameters.must.eql({})
     })
 
+    it("must be empty given undefined", function() {
+      var type = new MediumType(undefined)
+      type.type.must.equal("")
+      type.subtype.must.equal("")
+      type.suffix.must.equal("")
+      type.parameters.must.eql({})
+    })
+
+    it("must throw SyntaxError given null", function() {
+      var err
+      try { new MediumType(null) } catch (ex) { err = ex }
+      err.must.be.an.instanceof(SyntaxError)
+    })
+
     it("must copy if given another MediumType", function() {
       var other = new MediumType("application/vnd.app.model+json; v=1")
       var type = new MediumType(other)
@@ -483,6 +497,79 @@ describe("MediumType", function() {
       var given = "application/vnd.app.model;q=0.5;v=1;charset=utf-8"
       var string = "application/vnd.app.model; q=0.5; v=1; charset=utf-8"
       MediumType.stringify(given).must.equal(string)
+    })
+  })
+
+  describe(".split", function() {
+    it("must split a single media type", function() {
+      MediumType.split("text/plain").must.eql([new MediumType("text/plain")])
+    })
+
+    it("must split multiple media types", function() {
+      MediumType.split("text/html, text/plain, */*; q=0.1").must.eql([
+        new MediumType("text/html"),
+        new MediumType("text/plain"),
+        new MediumType("*/*; q=0.1")
+      ])
+    })
+
+    it("must ignore extra whitespace between commas", function() {
+      MediumType.split("text/html  ,  text/plain").must.eql([
+        new MediumType("text/html"),
+        new MediumType("text/plain"),
+      ])
+    })
+
+    it("must split given no whitespace between commas", function() {
+      MediumType.split("text/html,text/plain").must.eql([
+        new MediumType("text/html"),
+        new MediumType("text/plain"),
+      ])
+    })
+
+    it("must split given quoted parameters", function() {
+      var types = "text/html; charset=\"utf-8, iso8859\", text/plain"
+      MediumType.split(types).must.eql([
+        new MediumType("text/html; charset=\"utf-8, iso8859\""),
+        new MediumType("text/plain")
+      ])
+    })
+
+    it("must split RFC 7231 example", function() {
+      var types = "text/*;q=0.3, text/html;q=0.7, text/html;level=1, "
+      types += "text/html;level=2;q=0.4, */*;q=0.5"
+
+      MediumType.split(types).must.eql([
+        new MediumType("text/*; q=0.3"),
+        new MediumType("text/html; q=0.7"),
+        new MediumType("text/html; level=1"),
+        new MediumType("text/html; level=2; q=0.4"),
+        new MediumType("*/*; q=0.5")
+      ])
+    })
+
+    it("must throw SyntaxError given an empty string", function() {
+      var err
+      try { MediumType.split("") } catch (ex) { err = ex }
+      err.must.be.an.instanceof(SyntaxError)
+    })
+
+    it("must throw SyntaxError given a string with a space", function() {
+      var err
+      try { MediumType.split(" ") } catch (ex) { err = ex }
+      err.must.be.an.instanceof(SyntaxError)
+    })
+
+    it("must throw SyntaxError given a single comma", function() {
+      var err
+      try { MediumType.split(",") } catch (ex) { err = ex }
+      err.must.be.an.instanceof(SyntaxError)
+    })
+
+    it("must throw SyntaxError given garbage and a trailing comma", function() {
+      var err
+      try { MediumType.split("text/html foo,") } catch (ex) { err = ex }
+      err.must.be.an.instanceof(SyntaxError)
     })
   })
 })
