@@ -459,6 +459,97 @@ describe("MediumType", function() {
     })
   })
 
+  describe(".prototype.match", function() {
+    it("must return true given a matching MediumType", function() {
+      var a = "application/vnd.app.model+json; v=1; charset=utf-8"
+      new MediumType(a).match(new MediumType(a)).must.be.true()
+    })
+
+    it("must return true given a matching string", function() {
+      var a = "application/vnd.app.model+json; v=1; charset=utf-8"
+      new MediumType(a).match(a).must.be.true()
+    })
+
+    it("must return true given a wildcard type", function() {
+      var a = "application/javascript"
+      var b = "*/*"
+      new MediumType(a).match(b).must.be.true()
+    })
+
+    it("must return true given a wildcard subtype", function() {
+      var a = "text/plain"
+      var b = "text/*"
+      new MediumType(a).match(b).must.be.true()
+    })
+
+    it("must return false given a different type", function() {
+      var a = "application/javascript"
+      var b = "text/javascript"
+      new MediumType(a).match(b).must.be.false()
+    })
+
+    it("must return false given a different subtype", function() {
+      var a = "text/plain"
+      var b = "text/html"
+      new MediumType(a).match(b).must.be.false()
+    })
+
+    it("must return false given a wildcard type on subject", function() {
+      var a = "*/*"
+      var b = "application/javascript"
+      new MediumType(a).match(b).must.be.false()
+    })
+
+    it("must return false given a wildcard subtype on subject", function() {
+      var a = "text/*"
+      var b = "text/plain"
+      new MediumType(a).match(b).must.be.false()
+    })
+
+    it("must return false given a different suffix", function() {
+      var a = "application/vnd.app.model+xml"
+      var b = "application/vnd.app.model+json"
+      new MediumType(a).match(b).must.be.false()
+    })
+
+    it("must return false given a missing suffix", function() {
+      var a = "application/vnd.app.model"
+      var b = "application/vnd.app.model+json"
+      new MediumType(a).match(b).must.be.false()
+      new MediumType(b).match(a).must.be.false()
+    })
+
+    it("must return true given equal parameters", function() {
+      var a = "application/vnd.app.model; v=1"
+      var b = "application/vnd.app.model; v=1"
+      new MediumType(a).match(b).must.be.true()
+    })
+
+    it("must return true given a subset of parameters", function() {
+      var a = "application/vnd.app.model; v=1; charset=utf-8"
+      var b = "application/vnd.app.model; v=1"
+      new MediumType(a).match(b).must.be.true()
+    })
+
+    it("must return false given different parameters", function() {
+      var a = "application/vnd.app.model; v=1"
+      var b = "application/vnd.app.model; v=0"
+      new MediumType(a).match(b).must.be.false()
+    })
+
+    it("must return false given a missing parameter", function() {
+      var a = "application/vnd.app.model; v=1"
+      var b = "application/vnd.app.model; v=1; charset=utf-8"
+      new MediumType(a).match(b).must.be.false()
+    })
+
+    it("must return true if types differ by the q parameter", function() {
+      var a = "text/html"
+      var b = "text/html; q=0.5"
+      new MediumType(a).match(b).must.be.true()
+    })
+  })
+
   describe(".parse", function() {
     it("must parse given string to MediumType", function() {
       var type = MediumType.parse("application/vnd.app.model+json; v=1")

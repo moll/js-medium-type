@@ -56,6 +56,15 @@ MediumType.prototype.toString = function() {
 MediumType.prototype.toJSON = MediumType.prototype.toString
 MediumType.prototype.inspect = MediumType.prototype.toString
 
+MediumType.prototype.match = function(type) {
+  if (!(type instanceof MediumType)) type = new MediumType(type)
+  if (type.type != "*" && this.type != type.type) return false
+  if (type.subtype != "*" && this.subtype != type.subtype) return false
+  if (this.suffix != type.suffix) return false
+  if (!contains(this.parameters, type.parameters)) return false
+  return true
+}
+
 MediumType.parse = MediumType
 
 MediumType.stringify = function(type) {
@@ -129,6 +138,11 @@ function matchAt(string, regexp, pos) {
   return match
 }
 
+function contains(a, b) {
+  for (var key in b) if (key != "q" && a[key] != b[key]) return false
+  return true
+}
+
 function sortByQuality(a, b) {
   var aQ = a.parameters.q != null ? Number(a.parameters.q) : 1
   var bQ = b.parameters.q != null ? Number(b.parameters.q) : 1
@@ -150,4 +164,4 @@ function sortByParameters(a, b) {
   return count(b.parameters) - count(a.parameters)
 }
 
-function count(obj) { var i = 0; for (obj in obj) ++i; return i }
+function count(obj) { var i = 0; for (var key in obj) ++i, key; return i }
