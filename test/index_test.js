@@ -692,7 +692,7 @@ describe("MediumType", function() {
       MediumType.sort([a, b]).must.eql([a, b])
     })
 
-    it("must sort more parameters before fewer", function() {
+    it("must sort by parameter count", function() {
       var types = [
         new MediumType("text/html; level=3; q=0.7"),
         new MediumType("text/html; q=0.7"),
@@ -702,6 +702,13 @@ describe("MediumType", function() {
       ]
 
       MediumType.sort(_.shuffle(types)).must.eql(types)
+    })
+
+    it("must ignore q parameter when soritng by parameter count", function() {
+      var a = new MediumType("text/html; level=5; charset=utf-8")
+      var b = new MediumType("text/html; q=1; level=3")
+      var c = new MediumType("text/html; q=1")
+      MediumType.sort([c, b, a]).must.eql([a, b, c])
     })
 
     it("must not modify given array", function() {

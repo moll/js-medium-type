@@ -161,7 +161,11 @@ function sortByType(a, b) {
 }
 
 function sortByParameters(a, b) {
-  return count(b.parameters) - count(a.parameters)
+  return countParameters(b.parameters) - countParameters(a.parameters)
 }
 
-function count(obj) { var i = 0; for (var key in obj) ++i, key; return i }
+function countParameters(obj) {
+  var i = 0
+  for (var key in obj) if (key != "q") ++i
+  return i
+}
