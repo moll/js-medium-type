@@ -507,6 +507,33 @@ describe("MediumType", function() {
       new MediumType(a).match(b).must.be.true()
     })
 
+    it("must return true given a wildcard type without parameters", function() {
+      var a = "text/html; level=1"
+      var b = "*/*"
+      new MediumType(a).match(b).must.be.true()
+    })
+
+    it("must return true given a wildcard subtype without parameters",
+      function() {
+      var a = "text/html; level=1"
+      var b = "text/*"
+      new MediumType(a).match(b).must.be.true()
+    })
+
+    it("must return false given a wildcard type with different parameters",
+      function() {
+      var a = "text/html; level=1"
+      var b = "*/*; level=2"
+      new MediumType(a).match(b).must.be.false()
+    })
+
+    it("must return false given a wildcard subtype with different parameters",
+      function() {
+      var a = "text/html; level=1"
+      var b = "text/*; level=2"
+      new MediumType(a).match(b).must.be.false()
+    })
+
     it("must return false given a different type", function() {
       var a = "application/javascript"
       var b = "text/javascript"
@@ -528,6 +555,13 @@ describe("MediumType", function() {
     it("must return false given a wildcard subtype on subject", function() {
       var a = "text/*"
       var b = "text/plain"
+      new MediumType(a).match(b).must.be.false()
+    })
+
+    it("must return false given a wildcard subtype with a different type",
+      function() {
+      var a = "text/plain"
+      var b = "audio/*"
       new MediumType(a).match(b).must.be.false()
     })
 
