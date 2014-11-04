@@ -240,6 +240,7 @@ MediumType.stringify = function(type) {
  * @param {string} types
  */
 MediumType.split = function(string) {
+  if (string.length == 0) throw new SyntaxError("No Media Types")
   var types = []
   COMMAS.lastIndex = 0
 
@@ -250,8 +251,7 @@ MediumType.split = function(string) {
     if (!(match = matchAt(string, COMMAS, MEDIA_TYPES.lastIndex))) break
   }
 
-  var length = string.length
-  if (length == 0 || max(MEDIA_TYPES.lastIndex, COMMAS.lastIndex) != length)
+  if (max(MEDIA_TYPES.lastIndex, COMMAS.lastIndex) != string.length)
     throw new SyntaxError("Invalid Media Types: " + string)
 
   return types.map(MediumType.parse)
