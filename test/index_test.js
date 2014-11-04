@@ -307,6 +307,21 @@ describe("MediumType", function() {
     })
   })
 
+  describe(".prototype.name", function() {
+    it("must return the type and subtype", function() {
+      new MediumType("text/html").name.must.equal("text/html")
+    })
+
+    it("must return the type, subtype and suffix", function() {
+      var type = "application/rdf+xml"
+      new MediumType(type).name.must.equal(type)
+    })
+
+    it("must not contain parameters", function() {
+      new MediumType("text/html; q=0.3").name.must.equal("text/html")
+    })
+  })
+
   describe(".prototype.q", function() {
     it("must return q parameter as a number", function() {
       new MediumType("text/html; q=0.3").q.must.equal(0.3)

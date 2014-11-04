@@ -101,6 +101,7 @@ For extended documentation on all functions, please see the [MediumType.js API
 Documentation][api].
 
 ### [MediumType](https://github.com/moll/js-medium-type/blob/master/doc/API.md#MediumType)
+- [name](https://github.com/moll/js-medium-type/blob/master/doc/API.md#mediumType.name)
 - [parameters](https://github.com/moll/js-medium-type/blob/master/doc/API.md#mediumType.parameters)
 - [q](https://github.com/moll/js-medium-type/blob/master/doc/API.md#mediumType.q)
 - [subtype](https://github.com/moll/js-medium-type/blob/master/doc/API.md#mediumType.subtype)

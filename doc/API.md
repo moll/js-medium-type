@@ -1,6 +1,7 @@
 MediumType.js API Documentation
 ===============================
 ### [MediumType](#MediumType)
+- [name](#mediumType.name)
 - [parameters](#mediumType.parameters)
 - [q](#mediumType.q)
 - [subtype](#mediumType.subtype)
@@ -40,6 +41,17 @@ new MediumType({
   suffix: "json",
   parameters: {charset: "utf-8"}
 })
+```
+
+<a name="mediumType.name" />
+### mediumType.name
+Full media type name without parameters (read-only).  
+Contains the type, subtype and optional suffix.
+
+**Examples**:
+```javascript
+new MediumType("application/rdf+xml").name // application/rdf+xml
+new MediumType("text/html; q=0.3").name // text/html
 ```
 
 <a name="mediumType.parameters" />

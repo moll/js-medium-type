@@ -108,6 +108,21 @@ MediumType.prototype.suffix = ""
  */
 
 /**
+ * Full media type name without parameters (read-only).  
+ * Contains the type, subtype and optional suffix.
+ *
+ * @example
+ * new MediumType("application/rdf+xml").name // application/rdf+xml
+ * new MediumType("text/html; q=0.3").name // text/html
+ *
+ * @property {String} name
+ */
+Object.defineProperty(MediumType.prototype, "name", {
+  get: function() { return nameify(this) },
+  configurable: true, enumerable: true
+})
+
+/**
  * Numeric quality value of the media type taken from the `q` parameter.  
  * If missing, will default to `1`.
  *
@@ -133,15 +148,14 @@ Object.defineProperty(MediumType.prototype, "q", {
  * @method toString
  */
 MediumType.prototype.toString = function() {
-  var string = this.type + "/" + this.subtype
-  if (this.suffix) string += "+" + this.suffix
+  var type = nameify(this)
 
   for (var name in this.parameters) {
     var value = this.parameters[name]
-    if (value !== undefined) string += "; " + name + "=" + quote(value)
+    if (value !== undefined) type += "; " + name + "=" + quote(value)
   }
 
-  return string
+  return type
 }
 
 /**
@@ -310,6 +324,12 @@ var MEDIA_TYPES = new RegExp(TYPE + "/" + TYPE + PARAMETER + "*", "g")
 var ALL_TOKEN = new RegExp("^" + TOKEN + "$")
 var ESCAPE = /([\\"])/g
 var UNESCAPE = /\\(.)/g
+
+function nameify(type) {
+  var name = type.type + "/" + type.subtype
+  if (type.suffix) name += "+" + type.suffix
+  return name
+}
 
 function quote(value) {
   if (value == null) return '""'
