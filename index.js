@@ -254,9 +254,7 @@ MediumType.split = function(string) {
   if (length == 0 || max(MEDIA_TYPES.lastIndex, COMMAS.lastIndex) != length)
     throw new SyntaxError("Invalid Media Types: " + string)
 
-  return types.map(function(type) {
-    return type == null ? null : new MediumType(type)
-  })
+  return types.map(MediumType.parse)
 }
 
 /**
