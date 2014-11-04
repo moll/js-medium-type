@@ -1,5 +1,4 @@
 var _ = require("overstrike")
-var max = Math.max
 module.exports = MediumType
 
 /**
@@ -224,15 +223,20 @@ MediumType.stringify = function(type) {
 }
 
 /**
- * Split a comma separated string to an array of `MediumType`s.  
- * Handles quoted parameters with embedded spaces, commas etc.  
- * Media types with invalid syntax will result in a `SyntaxError` being thrown.
+ * Split a comma separated string to an array of media type strings.  
+ * Handles quoted parameters with embedded spaces, commas etc.
+ *
+ * If you need `MediaType` instances back, map over the array with
+ * `MediumType`:
+ * ```javascript
+ * MediumType.split(types).map(MediaType)
+ * ```
  *
  * @example
  * MediumType.split("text/html; levels=\"1, 2, 3\", text/plain")
  * // [
- * //   new MediumType("text/html; levels=\"1, 2, 3\"),
- * //   new MediumType("text/plain")
+ * //   "text/html; levels=\"1, 2, 3\",
+ * //   "text/plain"
  * // ]
  *
  * @static
@@ -240,21 +244,17 @@ MediumType.stringify = function(type) {
  * @param {string} types
  */
 MediumType.split = function(string) {
-  if (string.length == 0) throw new SyntaxError("No Media Types")
-  var types = []
+  var types = [], m
   COMMAS.lastIndex = 0
 
-  while (true) {
-    var match
-    if (!(match = matchAt(string, MEDIA_TYPES, COMMAS.lastIndex))) break
-    types.push(match[0])
-    if (!(match = matchAt(string, COMMAS, MEDIA_TYPES.lastIndex))) break
+  do types.push((m = matchAt(string, MEDIA_TYPES, COMMAS.lastIndex))? m[0] : "")
+  while (matchAt(string, COMMAS, MEDIA_TYPES.lastIndex))
+
+  if (MEDIA_TYPES.lastIndex != string.length) {
+    types[types.length - 1] += string.slice(MEDIA_TYPES.lastIndex)
   }
 
-  if (max(MEDIA_TYPES.lastIndex, COMMAS.lastIndex) != string.length)
-    throw new SyntaxError("Invalid Media Types: " + string)
-
-  return types.map(MediumType.parse)
+  return types
 }
 
 /**
@@ -323,7 +323,7 @@ function unquote(value) {
 function matchAt(string, regexp, pos) {
   regexp.lastIndex = pos
   var match = regexp.exec(string)
-  if (match == null || match.index != pos) return regexp.lastIndex = 0, null
+  if (match == null || match.index != pos) return regexp.lastIndex = pos, null
   return match
 }
 

@@ -677,75 +677,82 @@ describe("MediumType", function() {
   })
 
   describe(".split", function() {
+    it("must return a single empty string given an empty string", function() {
+      MediumType.split("").must.eql([""])
+    })
+
     it("must split a single media type", function() {
-      MediumType.split("text/plain").must.eql([new MediumType("text/plain")])
+      MediumType.split("text/plain").must.eql(["text/plain"])
     })
 
     it("must split multiple media types", function() {
-      MediumType.split("text/html, text/plain, */*; q=0.1").must.eql([
-        new MediumType("text/html"),
-        new MediumType("text/plain"),
-        new MediumType("*/*; q=0.1")
-      ])
+      var types = MediumType.split("text/html, text/plain, */*; q=0.1")
+      types.must.eql(["text/html", "text/plain", "*/*; q=0.1"])
     })
 
     it("must ignore extra whitespace between commas", function() {
-      MediumType.split("text/html  ,  text/plain").must.eql([
-        new MediumType("text/html"),
-        new MediumType("text/plain"),
-      ])
+      var types = MediumType.split("text/html  ,  text/plain")
+      types.must.eql(["text/html", "text/plain"])
     })
 
     it("must split given no whitespace between commas", function() {
-      MediumType.split("text/html,text/plain").must.eql([
-        new MediumType("text/html"),
-        new MediumType("text/plain"),
-      ])
+      var types = MediumType.split("text/html,text/plain")
+      types.must.eql(["text/html", "text/plain"])
     })
 
     it("must split given quoted parameters", function() {
-      var types = "text/html; charset=\"utf-8, iso8859\", text/plain"
-      MediumType.split(types).must.eql([
-        new MediumType("text/html; charset=\"utf-8, iso8859\""),
-        new MediumType("text/plain")
-      ])
+      var combined = "text/html; charset=\"utf-8, iso8859\", text/plain"
+      var types = MediumType.split(combined)
+      types.must.eql(["text/html; charset=\"utf-8, iso8859\"", "text/plain"])
     })
 
     it("must split RFC 7231 example", function() {
-      var types = "text/*;q=0.3, text/html;q=0.7, text/html;level=1, "
-      types += "text/html;level=2;q=0.4, */*;q=0.5"
+      var combined = "text/*;q=0.3, text/html;q=0.7, text/html;level=1, "
+      combined += "text/html;level=2;q=0.4, */*;q=0.5"
 
-      MediumType.split(types).must.eql([
-        new MediumType("text/*; q=0.3"),
-        new MediumType("text/html; q=0.7"),
-        new MediumType("text/html; level=1"),
-        new MediumType("text/html; level=2; q=0.4"),
-        new MediumType("*/*; q=0.5")
+      MediumType.split(combined).must.eql([
+        "text/*;q=0.3",
+        "text/html;q=0.7",
+        "text/html;level=1",
+        "text/html;level=2;q=0.4",
+        "*/*;q=0.5"
       ])
     })
 
-    it("must throw SyntaxError given an empty string", function() {
-      var err
-      try { MediumType.split("") } catch (ex) { err = ex }
-      err.must.be.an.instanceof(SyntaxError)
+    it("must return the whole string given two invalid types", function() {
+      MediumType.split("text, html").must.eql(["text, html"])
     })
 
-    it("must throw SyntaxError given a string with a space", function() {
-      var err
-      try { MediumType.split(" ") } catch (ex) { err = ex }
-      err.must.be.an.instanceof(SyntaxError)
+    it("must return the last invalid type", function() {
+      MediumType.split("text/html, q").must.eql(["text/html", "q"])
     })
 
-    it("must throw SyntaxError given a single comma", function() {
-      var err
-      try { MediumType.split(",") } catch (ex) { err = ex }
-      err.must.be.an.instanceof(SyntaxError)
+    it("must return two empty strings given a single comma", function() {
+      MediumType.split(",").must.eql(["", ""])
     })
 
-    it("must throw SyntaxError given garbage and a trailing comma", function() {
-      var err
-      try { MediumType.split("text/html foo,") } catch (ex) { err = ex }
-      err.must.be.an.instanceof(SyntaxError)
+    it("must return a single blank string given a blank string", function() {
+      MediumType.split(" ").must.eql([" "])
+    })
+
+    it("must return three empty strings given a spaced commas", function() {
+      MediumType.split(" ,   , ").must.eql(["", "", ""])
+    })
+
+    it("must return the whole string given an invalid type", function() {
+      MediumType.split("text/html q").must.eql(["text/html q"])
+    })
+
+    it("must return an empty string given a trailing comma", function() {
+      MediumType.split("text/html,").must.eql(["text/html", ""])
+    })
+
+    it("must return an empty string given a trailing comma", function() {
+      MediumType.split("text/html,").must.eql(["text/html", ""])
+    })
+
+    it("must return two empty strings given two trailing commas", function() {
+      MediumType.split("text/html,,").must.eql(["text/html", "", ""])
     })
   })
 

@@ -151,16 +151,21 @@ MediumType.sort([
 
 <a name="MediumType.split" />
 ### MediumType.split(types)
-Split a comma separated string to an array of `MediumType`s.  
-Handles quoted parameters with embedded spaces, commas etc.  
-Media types with invalid syntax will result in a `SyntaxError` being thrown.
+Split a comma separated string to an array of media type strings.  
+Handles quoted parameters with embedded spaces, commas etc.
+
+If you need `MediaType` instances back, map over the array with
+`MediumType`:
+```javascript
+MediumType.split(types).map(MediaType)
+```
 
 **Examples**:
 ```javascript
 MediumType.split("text/html; levels=\"1, 2, 3\", text/plain")
 // [
-//   new MediumType("text/html; levels=\"1, 2, 3\"),
-//   new MediumType("text/plain")
+//   "text/html; levels=\"1, 2, 3\",
+//   "text/plain"
 // ]
 ```
 
