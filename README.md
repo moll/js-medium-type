@@ -1,7 +1,9 @@
 MediumType.js
 =============
 [![NPM version][npm-badge]](http://badge.fury.io/js/medium-type)
+[![Build status][travis-badge]](https://travis-ci.org/moll/js-medium-type)
 [npm-badge]: https://badge.fury.io/js/medium-type.png
+[travis-badge]: https://travis-ci.org/moll/js-medium-type.png?branch=master
 
 MediumType.js is a JavaScript library to **parse and stringify media types**.
 
