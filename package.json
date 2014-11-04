@@ -1,6 +1,6 @@
 {
 	"name": "medium-type",
-	"version": "0.1.337",
+	"version": "0.1.338",
 	"description": "Class for parsing, stringifying and manipulating media types. Useful for content negotiation. Follows RFC2045, supports quoted parameters, all allowed characters etc.",
 	"keywords": [
 		"content-type",
