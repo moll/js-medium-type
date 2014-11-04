@@ -2,6 +2,33 @@ var _ = require("overstrike")
 var max = Math.max
 module.exports = MediumType
 
+/**
+ * [RFC 2045][rfc2045] media type class.
+ *
+ * Implements parsing based on [RFC 2045][rfc2045] with added support for
+ * suffixes ([RFC 3023][rfc3023], [RFC 6839][rfc6839]).
+ *
+ * Pass it a string or an object with necessary fields.  
+ * Media types with invalid syntax will result in a `SyntaxError` being thrown.
+ *
+ * [rfc2045]: https://tools.ietf.org/html/rfc2045
+ * [rfc3023]: https://tools.ietf.org/html/rfc3023
+ * [rfc6839]: https://tools.ietf.org/html/rfc6839
+ *
+ * @example
+ * new MediumType("application/vnd.app.model+json; charset=utf-8")
+ *
+ * new MediumType({
+ *   type: "application",
+ *   subtype: "vnd.app.model",
+ *   suffix: "json",
+ *   parameters: {charset: "utf-8"}
+ * })
+ *
+ * @class MediumType
+ * @constructor
+ * @param {String, Object, MediumType} mediaType
+ */
 function MediumType(type) {
   if (!(this instanceof MediumType)) return new MediumType(type)
   this.parameters = {}
@@ -37,16 +64,75 @@ function MediumType(type) {
   else throw new SyntaxError("Invalid Media Type: " + type)
 }
 
+/**
+ * Type of the media type.  
+ * Always in lower case.
+ *
+ * @example
+ * new MediumType("application/json").type // "application"
+ *
+ * @property {String} type
+ */
 MediumType.prototype.type = ""
+
+/**
+ * Subtype of the media type.  
+ * Always in lower case.
+ *
+ * @example
+ * new MediumType("application/json").subtype // "json"
+ *
+ * @property {String} subtype
+ */
 MediumType.prototype.subtype = ""
+
+/**
+ * Suffix of the media type.  
+ * Always in lower case.
+ *
+ * @example
+ * new MediumType("application/vnd.app.model+xml").suffix // "xml"
+ *
+ * @property {String} suffix
+ */
 MediumType.prototype.suffix = ""
 
+/**
+ * Parameters of the media type.  
+ * Keys are always in lower case. Values are left as-is.
+ *
+ * @example
+ * new MediumType("text/html; q=0.3; charset=utf-8").parameters
+ * // {q: "0.3", charset: "utf-8"}
+ *
+ * @property {Object} parameters
+ */
+
+/**
+ * Numeric quality value of the media type taken from the `q` parameter.  
+ * If missing, will default to `1`.
+ *
+ * @example
+ * new MediumType("text/html; q=0.3").q // 0.3
+ * new MediumType("text/html").q // 1
+ *
+ * @property {Number} q
+ */
 Object.defineProperty(MediumType.prototype, "q", {
   get: function() { var q = this.parameters.q; return q == null? 1: Number(q) },
   set: function(value) { this.parameters.q = value },
   configurable: true, enumerable: true
 })
 
+/**
+ * Stringify a `MediumType` to canonical form.
+ *
+ * @example
+ * new MediumType({type: "text", subtype: "html"}).toString() // "text/html"
+ * new MediumType("text/html;q=0.3").toString() // "text/html; q=0.3"
+ *
+ * @method toString
+ */
 MediumType.prototype.toString = function() {
   var string = this.type + "/" + this.subtype
   if (this.suffix) string += "+" + this.suffix
@@ -59,9 +145,40 @@ MediumType.prototype.toString = function() {
   return string
 }
 
+/**
+ * Stringifies the media type to a canonical string when passing it to
+ * `JSON.stringify`.  
+ * This way you don't need to manually call `toString` when stringifying.
+ *
+ * @example
+ * JSON.stringify(new MediumType("text/html")) // "\"text/html\""
+ *
+ * @method toJSON
+ * @alias toString
+ */
 MediumType.prototype.toJSON = MediumType.prototype.toString
 MediumType.prototype.inspect = MediumType.prototype.toString
 
+/**
+ * Matches a given media type pattern to the current media type.  
+ * Supports wildcards (`*`) for type and subtype.  
+ *
+ * Only those parameters are checked that are in the given type. This allows
+ * for matching `application/json; charset=utf-8` by passing in
+ * `application/json`. `application/json; charset=utf-16` however would not
+ * match. The `q` parameter is ignored entirely for easier use when matching
+ * against HTTP's `Accept` header types.
+ *
+ * @example
+ * new MediumType("application/json").match(new MediumType("application/json")) // true
+ * new MediumType("application/json").match("application/*") // true
+ * new MediumType("text/html+zip").match("text/*+zip") // true
+ * new MediumType("text/html; charset=utf-8").match("text/html; charset=utf-8") // true
+ * new MediumType("text/html").match("text/html; q=0.3") // true
+ *
+ * @method match
+ * @param {string, MediumType} type
+ */
 MediumType.prototype.match = function(t) {
   if (!(t instanceof MediumType)) t = new MediumType(t)
 
@@ -73,13 +190,55 @@ MediumType.prototype.match = function(t) {
   return eql
 }
 
+/**
+ * Parse a media type string to a `MediumType`.  
+ * Media types with invalid syntax will result in a `SyntaxError` being thrown.
+ *
+ * @example
+ * MediumType.parse("application/json")
+ * MediumType.parse("text/html+zip")
+ * MediumType.parse("text/html; charset=utf-8")
+ *
+ * @static
+ * @method parse
+ * @param {string} type
+ */
 MediumType.parse = MediumType
 
+/**
+ * Stringify a `MediumType` to canonical form.
+ *
+ * @example
+ * MediumType.stringify(new MediumType("text/html")) // "text/html"
+ * MediumType.stringify({type: "text", subtype: "html"}) // "text/html"
+ * MediumType.stringify("text/html;q=0.3") // "text/html; q=0.3"
+ *
+ * @static
+ * @method stringify
+ * @alias toString
+ * @param {Object, MediumType} type
+ */
 MediumType.stringify = function(type) {
   if (type instanceof MediumType) return type.toString()
   return new MediumType(type).toString()
 }
 
+/**
+ * Split a comma separated string to an array of `MediumType`s.  
+ * Handles quoted parameters with embedded spaces, commas etc.  
+ * Media types with invalid syntax will result in a `SyntaxError` being thrown.
+ *
+ * @example
+ * MediumType.split("text/html; levels=\"1, 2, 3\", text/plain")
+ * // [
+ * //   new MediumType("text/html; levels=\"1, 2, 3\"),
+ * //   new MediumType("text/plain")
+ * // ]
+ *
+ * @static
+ * @method split
+ * @param {string} types
+ */
 MediumType.split = function(string) {
   var types = []
   COMMAS.lastIndex = 0
@@ -100,6 +259,30 @@ MediumType.split = function(string) {
   })
 }
 
+/**
+ * Sort an array of `MediumType`s according to sorting rules of the HTTP
+ * `Accept` header listed in [RFC 2616][rfc2616] and [RFC 7231][rfc7231].
+ * That is, first by the `q` parameter, then by type and subtype specificity
+ * and then by parameter count (excluding the `q` parameter).
+ *
+ * If you want to sort the comma separated HTTP `Accept` header, split it first
+ * with [`MediumType.split`](#MediumType.split).
+ *
+ * [rfc2616]: https://tools.ietf.org/html/rfc2616
+ * [rfc7231]: https://tools.ietf.org/html/rfc7231
+ *
+ * @example
+ * MediumType.sort([
+ *   new MediumType("text/html; level=3; q=0.7"),
+ *   new MediumType("text/html; q=0.7"),
+ *   new MediumType("text/plain; q=0.5"),
+ *   new MediumType("text/*; q=0.1")
+ * ])
+ *
+ * @static
+ * @method sort
+ * @param {Array} types
+ */
 MediumType.sort = function(types) {
   return types.slice().sort(MediumType.comparator)
 }

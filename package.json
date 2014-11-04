@@ -10,7 +10,8 @@
 		"rfc2046",
 		"rfc3023",
 		"rfc6838",
-		"rfc6839"
+		"rfc6839",
+		"rfc7231"
 	],
 	"homepage": "https://github.com/moll/js-medium-type",
 	"bugs": "https://github.com/moll/js-medium-type/issues",
