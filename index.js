@@ -263,6 +263,8 @@ MediumType.split = function(string) {
  * That is, first by the `q` parameter, then by type and subtype specificity
  * and then by parameter count (excluding the `q` parameter).
  *
+ * Returns a new array and does not modify the given array.
+ *
  * If you want to sort the comma separated HTTP `Accept` header, split it first
  * with [`MediumType.split`](#MediumType.split).
  *
