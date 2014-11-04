@@ -62,13 +62,15 @@ MediumType.prototype.toString = function() {
 MediumType.prototype.toJSON = MediumType.prototype.toString
 MediumType.prototype.inspect = MediumType.prototype.toString
 
-MediumType.prototype.match = function(type) {
-  if (!(type instanceof MediumType)) type = new MediumType(type)
-  if (type.type != "*" && this.type != type.type) return false
-  if (type.subtype != "*" && this.subtype != type.subtype) return false
-  if (this.suffix != type.suffix) return false
-  if (!contains(this.parameters, type.parameters)) return false
-  return true
+MediumType.prototype.match = function(t) {
+  if (!(t instanceof MediumType)) t = new MediumType(t)
+
+  var eql = true
+  eql = eql && (t.type == "*" || this.type == t.type)
+  eql = eql && (t.subtype == "*" || this.subtype == t.subtype)
+  eql = eql && (t.subtype == "*" && t.suffix == "" || this.suffix == t.suffix)
+  eql = eql && contains(this.parameters, t.parameters)
+  return eql
 }
 
 MediumType.parse = MediumType

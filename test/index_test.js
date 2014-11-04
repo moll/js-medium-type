@@ -507,6 +507,13 @@ describe("MediumType", function() {
       new MediumType(a).match(b).must.be.true()
     })
 
+    it("must return true given a wildcard subtype and subject with suffix",
+      function() {
+      var a = "application/vnd.app.model+json"
+      var b = "application/*"
+      new MediumType(a).match(b).must.be.true()
+    })
+
     it("must return true given a wildcard type without parameters", function() {
       var a = "text/html; level=1"
       var b = "*/*"
@@ -518,6 +525,25 @@ describe("MediumType", function() {
       var a = "text/html; level=1"
       var b = "text/*"
       new MediumType(a).match(b).must.be.true()
+    })
+
+    it("must return true given a wildcard subtype with suffix",
+      function() {
+      var a = "application/vnd.app.model+json"
+      var b = "application/*+json"
+      new MediumType(a).match(b).must.be.true()
+    })
+
+    it("must return false given a wildcard subtype with different suffix",
+      function() {
+      var a, b
+      a = "application/vnd.app.model+xml"
+      b = "application/*+json"
+      new MediumType(a).match(b).must.be.false()
+
+      a = "application/vnd.app.model"
+      b = "application/*+json"
+      new MediumType(a).match(b).must.be.false()
     })
 
     it("must return false given a wildcard type with different parameters",
