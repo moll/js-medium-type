@@ -1,3 +1,6 @@
+## Unreleased
+- Removes dependency on [Overstrike.js](https://github.com/moll/js-overstrike).
+
 ## 0.1.338 (Nov 4, 2014)
 - Adds [`MediumType.prototype.name`][] as a way to get the full type as
   a string.

@@ -1,4 +1,3 @@
-var _ = require("overstrike")
 module.exports = MediumType
 
 /**
@@ -36,7 +35,7 @@ function MediumType(type) {
     this.type = type.type
     this.subtype = type.subtype
     this.suffix = type.suffix
-    this.parameters = _.assign(this.parameters, type.parameters)
+    this.parameters = assign(this.parameters, type.parameters)
   }
   else if (typeof type == "string") {
     var match = MEDIA_TYPE.exec(type)
@@ -58,7 +57,7 @@ function MediumType(type) {
       this.parameters[param[1].toLowerCase()] = unquote(param[2])
     }
   }
-  else if (type && typeof type == "object") _.assign(this, type)
+  else if (type && typeof type == "object") assign(this, type)
   else if (type === undefined);
   else throw new SyntaxError("Invalid Media Type: " + type)
 }
@@ -324,6 +323,11 @@ var MEDIA_TYPES = new RegExp(TYPE + "/" + TYPE + PARAMETER + "*", "g")
 var ALL_TOKEN = new RegExp("^" + TOKEN + "$")
 var ESCAPE = /([\\"])/g
 var UNESCAPE = /\\(.)/g
+
+function assign(a, b) {
+  for (var key in b) a[key] = b[key]
+  return a
+}
 
 function nameify(type) {
   var name = type.type + "/" + type.subtype
