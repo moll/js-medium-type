@@ -1,4 +1,4 @@
-## Unreleased
+## 1.0.0 (Jan 14, 2015)
 - Removes dependency on [Overstrike.js](https://github.com/moll/js-overstrike).
 
 ## 0.1.338 (Nov 4, 2014)
