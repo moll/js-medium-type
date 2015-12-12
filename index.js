@@ -336,13 +336,13 @@ function nameify(type) {
 }
 
 function quote(value) {
-  if (value == null) return '""'
+  if (value == null) return "\"\""
   if (ALL_TOKEN.test(value)) return value
-  return '"' + value.replace(ESCAPE, "\\$1") + '"'
+  return "\"" + value.replace(ESCAPE, "\\$1") + "\""
 }
 
 function unquote(value) {
-  if (value[0] == '"') return value.slice(1, -1).replace(UNESCAPE, "$1")
+  if (value[0] == "\"") return value.slice(1, -1).replace(UNESCAPE, "$1")
   return value
 }
 
