@@ -7,13 +7,13 @@ MediumType.js API Documentation
 - [subtype](#mediumType.subtype)
 - [suffix](#mediumType.suffix)
 - [type](#mediumType.type)
-- [match](#MediumType.prototype.match)(type)
-- [parse](#MediumType.parse)(type)
-- [sort](#MediumType.sort)(types)
-- [split](#MediumType.split)(types)
-- [stringify](#MediumType.stringify)(type)
-- [toJSON](#MediumType.prototype.toJSON)()
-- [toString](#MediumType.prototype.toString)()
+- [.prototype.match](#MediumType.prototype.match)(type)
+- [.prototype.toJSON](#MediumType.prototype.toJSON)()
+- [.prototype.toString](#MediumType.prototype.toString)()
+- [.parse](#MediumType.parse)(type)
+- [.sort](#MediumType.sort)(types)
+- [.split](#MediumType.split)(types)
+- [.stringify](#MediumType.stringify)(type)
 
 
 <a name="MediumType" />
@@ -126,6 +126,28 @@ new MediumType("text/html; charset=utf-8").match("text/html; charset=utf-8") // 
 new MediumType("text/html").match("text/html; q=0.3") // true
 ```
 
+<a name="MediumType.prototype.toJSON" />
+### MediumType.prototype.toJSON()
+Alias of [`toString`](#MediumType.prototype.toString).  
+Stringifies the media type to a canonical string when passing it to
+`JSON.stringify`.  
+This way you don't need to manually call `toString` when stringifying.
+
+**Examples**:
+```javascript
+JSON.stringify(new MediumType("text/html")) // "\"text/html\""
+```
+
+<a name="MediumType.prototype.toString" />
+### MediumType.prototype.toString()
+Stringify a `MediumType` to canonical form.
+
+**Examples**:
+```javascript
+new MediumType({type: "text", subtype: "html"}).toString() // "text/html"
+new MediumType("text/html;q=0.3").toString() // "text/html; q=0.3"
+```
+
 <a name="MediumType.parse" />
 ### MediumType.parse(type)
 Parse a media type string to a `MediumType`.  
@@ -193,26 +215,4 @@ Stringify a `MediumType` to canonical form.
 MediumType.stringify(new MediumType("text/html")) // "text/html"
 MediumType.stringify({type: "text", subtype: "html"}) // "text/html"
 MediumType.stringify("text/html;q=0.3") // "text/html; q=0.3"
-```
-
-<a name="MediumType.prototype.toJSON" />
-### MediumType.prototype.toJSON()
-Alias of [`toString`](#MediumType.prototype.toString).  
-Stringifies the media type to a canonical string when passing it to
-`JSON.stringify`.  
-This way you don't need to manually call `toString` when stringifying.
-
-**Examples**:
-```javascript
-JSON.stringify(new MediumType("text/html")) // "\"text/html\""
-```
-
-<a name="MediumType.prototype.toString" />
-### MediumType.prototype.toString()
-Stringify a `MediumType` to canonical form.
-
-**Examples**:
-```javascript
-new MediumType({type: "text", subtype: "html"}).toString() // "text/html"
-new MediumType("text/html;q=0.3").toString() // "text/html; q=0.3"
 ```
