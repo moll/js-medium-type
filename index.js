@@ -1,5 +1,25 @@
 module.exports = MediumType
 
+// https://tools.ietf.org/html/rfc2045#section-5.1
+//
+// Using the permissive RFC 2045 5.1 for parsing as opposed to RFC 6838 that
+// states the requirements for _registering_ media types.
+var TOKEN = "[-a-zA-Z0-9!#$%^&*_+{}\\|'.`~]+"
+var QUOTED = "\"[^\\\\\"\x00-\x1f\x7f]*(\\\\.[^\\\\\"\x00-\x1f\x7f]*)*\""
+var TYPE = "(" + TOKEN + ")"
+var COMMAS = /\s*,\s*/g
+
+// https://tools.ietf.org/html/rfc2045#section-5.1
+var PARAMETER = "(?:\\s*;\\s*(" + TOKEN + ")=(" + TOKEN + "|" + QUOTED + "))"
+var PARAMETERS = new RegExp(PARAMETER, "g")
+
+var MEDIA_TYPE = new RegExp("^" + TYPE + "/" + TYPE + PARAMETER + "*$")
+var MEDIA_TYPES = new RegExp(TYPE + "/" + TYPE + PARAMETER + "*", "g")
+
+var ALL_TOKEN = new RegExp("^" + TOKEN + "$")
+var ESCAPE = /([\\"])/g
+var UNESCAPE = /\\(.)/g
+
 /**
  * [RFC 2045][rfc2045] media type class.
  *
@@ -303,26 +323,6 @@ MediumType.sort = function(types) {
 MediumType.comparator = function(a, b) {
   return sortByQuality(a, b) || sortByType(a, b) || sortByParameters(a, b)
 }
-
-// https://tools.ietf.org/html/rfc2045#section-5.1
-//
-// Using the permissive RFC 2045 5.1 for parsing as opposed to RFC 6838 that
-// states the requirements for _registering_ media types.
-var TOKEN = "[-a-zA-Z0-9!#$%^&*_+{}\\|'.`~]+"
-var QUOTED = "\"[^\\\\\"\x00-\x1f\x7f]*(\\\\.[^\\\\\"\x00-\x1f\x7f]*)*\""
-var TYPE = "(" + TOKEN + ")"
-var COMMAS = /\s*,\s*/g
-
-// https://tools.ietf.org/html/rfc2045#section-5.1
-var PARAMETER = "(?:\\s*;\\s*(" + TOKEN + ")=(" + TOKEN + "|" + QUOTED + "))"
-var PARAMETERS = new RegExp(PARAMETER, "g")
-
-var MEDIA_TYPE = new RegExp("^" + TYPE + "/" + TYPE + PARAMETER + "*$")
-var MEDIA_TYPES = new RegExp(TYPE + "/" + TYPE + PARAMETER + "*", "g")
-
-var ALL_TOKEN = new RegExp("^" + TOKEN + "$")
-var ESCAPE = /([\\"])/g
-var UNESCAPE = /\\(.)/g
 
 function assign(a, b) {
   for (var key in b) a[key] = b[key]
