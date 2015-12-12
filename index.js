@@ -248,7 +248,7 @@ MediumType.stringify = function(type) {
  * @example
  * MediumType.split("text/html; levels=\"1, 2, 3\", text/plain")
  * // [
- * //   "text/html; levels=\"1, 2, 3\",
+ * //   "text/html; levels=\"1, 2, 3\"",
  * //   "text/plain"
  * // ]
  *
