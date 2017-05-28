@@ -16,8 +16,7 @@ MediumType.js API Documentation
 - [.stringify](#MediumType.stringify)(type)
 
 
-<a name="MediumType" />
-MediumType(mediaType)
+MediumType(mediaType) <a name="MediumType"></a>
 ---------------------
 [RFC 2045][rfc2045] media type class.
 
@@ -43,8 +42,7 @@ new MediumType({
 })
 ```
 
-<a name="mediumType.name" />
-### mediumType.name
+### mediumType.name <a name="mediumType.name"></a>
 Full media type name without parameters (read-only).  
 Contains the type, subtype and optional suffix.
 
@@ -54,8 +52,7 @@ new MediumType("application/rdf+xml").name // application/rdf+xml
 new MediumType("text/html; q=0.3").name // text/html
 ```
 
-<a name="mediumType.parameters" />
-### mediumType.parameters
+### mediumType.parameters <a name="mediumType.parameters"></a>
 Parameters of the media type.  
 Keys are always in lower case. Values are left as-is.
 
@@ -65,8 +62,7 @@ new MediumType("text/html; q=0.3; charset=utf-8").parameters
 // {q: "0.3", charset: "utf-8"}
 ```
 
-<a name="mediumType.q" />
-### mediumType.q
+### mediumType.q <a name="mediumType.q"></a>
 Numeric quality value of the media type taken from the `q` parameter.  
 If missing, will default to `1`.
 
@@ -76,8 +72,7 @@ new MediumType("text/html; q=0.3").q // 0.3
 new MediumType("text/html").q // 1
 ```
 
-<a name="mediumType.subtype" />
-### mediumType.subtype
+### mediumType.subtype <a name="mediumType.subtype"></a>
 Subtype of the media type.  
 Always in lower case.
 
@@ -86,8 +81,7 @@ Always in lower case.
 new MediumType("application/json").subtype // "json"
 ```
 
-<a name="mediumType.suffix" />
-### mediumType.suffix
+### mediumType.suffix <a name="mediumType.suffix"></a>
 Suffix of the media type.  
 Always in lower case.
 
@@ -96,8 +90,7 @@ Always in lower case.
 new MediumType("application/vnd.app.model+xml").suffix // "xml"
 ```
 
-<a name="mediumType.type" />
-### mediumType.type
+### mediumType.type <a name="mediumType.type"></a>
 Type of the media type.  
 Always in lower case.
 
@@ -106,8 +99,7 @@ Always in lower case.
 new MediumType("application/json").type // "application"
 ```
 
-<a name="MediumType.prototype.match" />
-### MediumType.prototype.match(type)
+### MediumType.prototype.match(type) <a name="MediumType.prototype.match"></a>
 Matches a given media type pattern to the current media type.  
 Supports wildcards (`*`) for type and subtype.  
 
@@ -126,8 +118,7 @@ new MediumType("text/html; charset=utf-8").match("text/html; charset=utf-8") // 
 new MediumType("text/html").match("text/html; q=0.3") // true
 ```
 
-<a name="MediumType.prototype.toJSON" />
-### MediumType.prototype.toJSON()
+### MediumType.prototype.toJSON() <a name="MediumType.prototype.toJSON"></a>
 Alias of [`toString`](#MediumType.prototype.toString).  
 Stringifies the media type to a canonical string when passing it to
 `JSON.stringify`.  
@@ -138,8 +129,7 @@ This way you don't need to manually call `toString` when stringifying.
 JSON.stringify(new MediumType("text/html")) // "\"text/html\""
 ```
 
-<a name="MediumType.prototype.toString" />
-### MediumType.prototype.toString()
+### MediumType.prototype.toString() <a name="MediumType.prototype.toString"></a>
 Stringify a `MediumType` to canonical form.
 
 **Examples**:
@@ -148,8 +138,7 @@ new MediumType({type: "text", subtype: "html"}).toString() // "text/html"
 new MediumType("text/html;q=0.3").toString() // "text/html; q=0.3"
 ```
 
-<a name="MediumType.parse" />
-### MediumType.parse(type)
+### MediumType.parse(type) <a name="MediumType.parse"></a>
 Parse a media type string to a `MediumType`.  
 Media types with invalid syntax will result in a `SyntaxError` being thrown.
 
@@ -160,8 +149,7 @@ MediumType.parse("text/html+zip")
 MediumType.parse("text/html; charset=utf-8")
 ```
 
-<a name="MediumType.sort" />
-### MediumType.sort(types)
+### MediumType.sort(types) <a name="MediumType.sort"></a>
 Sort an array of `MediumType`s according to sorting rules of the HTTP
 `Accept` header listed in [RFC 2616][rfc2616] and [RFC 7231][rfc7231].
 That is, first by the `q` parameter, then by type and subtype specificity
@@ -185,8 +173,7 @@ MediumType.sort([
 ])
 ```
 
-<a name="MediumType.split" />
-### MediumType.split(types)
+### MediumType.split(types) <a name="MediumType.split"></a>
 Split a comma separated string to an array of media type strings.  
 Handles quoted parameters with embedded spaces, commas etc.
 
@@ -205,8 +192,7 @@ MediumType.split("text/html; levels=\"1, 2, 3\", text/plain")
 // ]
 ```
 
-<a name="MediumType.stringify" />
-### MediumType.stringify(type)
+### MediumType.stringify(type) <a name="MediumType.stringify"></a>
 Alias of [`toString`](#MediumType.prototype.toString).  
 Stringify a `MediumType` to canonical form.
 
